@@ -1,0 +1,16 @@
+#app {
+    overflow: hidden;
+    width: 100vw;
+    height: 150vh;
+    display: grid;
+    grid-template-columns: 50% 50%;
+    grid-template-rows: min-content 80vh min-content 100vh;
+}
+
+@media screen and (min-width: 768px) {
+    #app {
+        height: 100vh;
+        grid-template-columns: 25% 25% 50%;
+        grid-template-rows: min-content 100%;
+    }   
+}

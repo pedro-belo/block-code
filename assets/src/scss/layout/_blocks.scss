@@ -1,0 +1,22 @@
+.blocks {
+
+    &--statement,
+    &--script {
+        padding: 10px;
+        overflow: scroll;
+    }
+
+    &--statement *:not(:last-child),
+    &--script *:not(:last-child) {
+        margin-bottom: 10px;
+    }
+
+    &--statement {
+        background-color: $color-orange-light;
+    }
+
+    &--script {
+        background-color: $color-blue-light;
+    }
+
+}

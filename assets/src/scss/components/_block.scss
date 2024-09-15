@@ -1,0 +1,85 @@
+.block {
+    font-size: 1.8rem;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 1px;
+
+    &:hover {
+        transform: scale(0.99);
+    }
+
+
+    &--statement,
+    &--script {
+        box-shadow: 2px 2px 4px rgba($color: $color-dark, $alpha: 0.3);
+    }
+
+    &--script {
+        background-color: $color-blue-dark;
+    }
+
+    &--statement {
+        background-color: $color-orange-dark;
+        box-shadow: 2px 2px 4px rgba($color: $color-dark, $alpha: 0.3);
+    }
+
+    &__desc {
+        user-select: none;
+        padding: 10px 20px;
+
+        &--script {
+            background-color: $color-blue-dark;
+
+            & input {
+                background-color: $color-blue-light;
+            }
+        }
+
+        &--statement {
+            background-color: $color-orange-dark;
+
+            & input {
+                background-color: $color-orange-light;
+            }
+        }
+
+        & input {
+            text-align: center;
+            border: 0;
+            border-radius: 8px;
+            padding: 10px;
+            max-width: 7rem;
+            outline: none;
+        }
+    }
+
+    &__group {
+        position: relative;
+        width: 100%;
+        min-height: 20px;
+        margin: 10px 0;
+        padding-left: 20px;
+
+        &--script {
+            span {
+                background-color: $color-blue-light;
+            }
+        }
+
+        &--statement {
+            span {
+                background-color: $color-orange-light;
+            }
+        }
+
+        & span {
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+            right: -1px;
+            display: inline-block;
+            padding: 10px;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Block Code</title>
+    <link rel="stylesheet" href="/assets/dist/main.css">
+    <link rel="icon" type="image/x-icon" href="/assets/images/bee.png">
+    <meta name="description" content="Blockcode: A visual programming toolkit">
+    <meta name="keywords" content="Block, code, 500 lines or less, html, css, javascript">
+    <meta name="author" content="Pedro Belo">
+</head>
+
+
+<body>
+    <input id="uploadScriptInput" style="display: none;" type="file" value="">
+
+    <main id="app">
+
+        <!-- Headers  -->
+
+        <div class="header header__menu">Menu</div>
+
+        <div class="header header__script">
+            Script:
+            <button id="btnRunScript" title="Executar">
+                <span class="material-icons-outlined">play_arrow</span>
+            </button>
+            <button id="btnDownloadScript" title="Download Script">
+                <span class="material-icons-outlined">download</span>
+            </button>
+            <button id="btnUploadScript" title="Carregar Script">
+                <span class="material-icons-outlined">upload</span>
+            </button>
+            <button id="btnResetApp" title="Resetar">
+                <span class="material-icons-outlined">delete</span>
+            </button>
+        </div>
+
+        <div class="header header__output">Saída</div>
+
+        <!-- Statements, Script and output -->
+
+        <section class="blocks blocks--statement"></section>
+        <section class="blocks blocks--script"></section>
+        <section class="output">
+            <img class="cursor" src="/assets/images/bee.png" width="35" height="35">
+            <canvas></canvas>
+        </section>
+
+    </main>
+
+    <script src="/assets/dist/main.js"></script>
+</body>
+
+</html>
