@@ -2,9 +2,12 @@
 @import "./global";
 
 @import "./layout/app";
+@import "./layout/app.mq";
 @import "./layout/blocks";
 @import "./layout/output";
+@import "./layout/output.mq";
 
 @import "./components/block";
 @import "./components/cursor";
 @import "./components/header";
+@import "./components/header.mq";
