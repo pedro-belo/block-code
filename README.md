@@ -132,3 +132,60 @@ Código
             ]
         }
     ]
+
+### Exemplo do Livro
+
+![Estrela](./images/example.png)
+
+Código
+
+    [
+        {
+            "name": "gotoCenter"
+        },
+        {
+            "name": "repeat",
+            "value": 7,
+            "children": [
+                {
+                    "name": "right",
+                    "value": 47
+                },
+                {
+                    "name": "forward",
+                    "value": 10
+                },
+                {
+                    "name": "repeat",
+                    "value": 16,
+                    "children": [
+                        {
+                            "name": "right",
+                            "value": 29
+                        },
+                        {
+                            "name": "forward",
+                            "value": -38
+                        }
+                    ]
+                },
+                {
+                    "name": "repeat",
+                    "value": 16,
+                    "children": [
+                        {
+                            "name": "right",
+                            "value": -19
+                        },
+                        {
+                            "name": "forward",
+                            "value": 10
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "HideTurtle"
+        }
+    ]
