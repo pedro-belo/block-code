@@ -1,0 +1,6 @@
+@media screen and (min-width: 768px) {
+    #app {
+        grid-template-columns: 25% 25% 50%;
+        grid-template-rows: min-content 100%;
+    }
+}
