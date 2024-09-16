@@ -1,94 +1,106 @@
 import { v4 as uuidv4 } from "uuid";
 
+const mapNameToAttr = {
+  className: "class",
+};
+
+function createElement(tagName, attrs) {
+  const element = document.createElement(tagName);
+
+  Object.keys(attrs).forEach((attr) => {
+    element.setAttribute(mapNameToAttr[attr] || attr, attrs[attr]);
+  });
+
+  return element;
+}
+
 export default class BlockBuilder {
-  createBaseBlock() {
-    const block = document.createElement("div");
-    block.classList.add("block");
-    block.draggable = "true";
-    return block;
-  }
+  static CLASS_BLOCK = "block";
+  static CLASS_BLOCK_DESC = "block__desc";
+  static CLASS_BLOCK_GROUP = "block__group";
+  static CLASS_BLOCK_GROUP_CONTAINER = "block__group__container";
 
-  createBaseBlockDesc() {
-    const blockDesc = document.createElement("p");
-    blockDesc.classList.add("block__desc");
-    return blockDesc;
-  }
+  #createBaseBlock(name) {
+    const block = createElement("div", {
+      id: BlockBuilder.generateRandomBlockId(),
+      className: BlockBuilder.CLASS_BLOCK,
+      draggable: true,
+    });
 
-  addBlockGroup(block) {
-    const blockGroup = document.createElement("div");
-    blockGroup.classList.add("block__group");
-
-    const span = document.createElement("span");
-    span.classList.add("block__group__container");
-
-    blockGroup.appendChild(span);
-
-    block.appendChild(blockGroup);
-  }
-
-  #createNumberInput(value) {
-    const input = document.createElement("input");
-    input.setAttribute("value", value);
-    input.setAttribute("type", "number");
-
-    return input;
-  }
-
-  createBlock(name, isGroup) {
-    const block = this.createBaseBlock();
-    block.setAttribute("id", BlockBuilder.generateRandomBlockId());
+    const blockDesc = this.#createBaseBlockDesc();
+    block.appendChild(blockDesc);
 
     block.dataset.name = name;
 
-    const text = this.createBaseBlockDesc();
-    block.appendChild(text);
-
-    if (isGroup) {
-      this.addBlockGroup(block);
-    }
-
-    return block;
+    return { root: block, blockDesc: blockDesc };
   }
 
-  #inputAsText(input, textTemplate) {
+  #createBaseBlockDesc() {
+    return createElement("p", { className: BlockBuilder.CLASS_BLOCK_DESC });
+  }
+
+  #addBlockGroup(block) {
+    block.blockGroup = createElement("div", {
+      className: BlockBuilder.CLASS_BLOCK_GROUP,
+    });
+
+    block.blockGroup.appendChild(
+      createElement("span", {
+        className: BlockBuilder.CLASS_BLOCK_GROUP_CONTAINER,
+      })
+    );
+
+    block.root.appendChild(block.blockGroup);
+  }
+
+  #createNumberInput(value) {
+    return createElement("input", {
+      value: value,
+      type: "number",
+    });
+  }
+
+  #embedInputInTemplate(input, template) {
     const inputText = input.outerHTML;
-    return textTemplate.replace("__REPL__", inputText);
+    return template.replace("__REPL__", inputText);
   }
 
   createSimpleBlock(name, text) {
-    const block = this.createBlock(name, false);
-
-    block.children[0].textContent = text;
-
-    return block;
+    const block = this.#createBaseBlock(name);
+    block.blockDesc.textContent = text;
+    return block.root;
   }
 
-  createNumericBlock(name, text, defaultValue) {
-    const block = this.createBlock(name, false);
-    const input = this.#createNumberInput(defaultValue);
-    block.children[0].innerHTML = this.#inputAsText(input, text);
-    return block;
+  createNumericBlock(name, text, value) {
+    const block = this.#createBaseBlock(name);
+
+    const input = this.#createNumberInput(value);
+    block.blockDesc.innerHTML = this.#embedInputInTemplate(input, text);
+
+    return block.root;
   }
 
-  createNumericGroup(name, text, defaultValue) {
-    const block = this.createBlock(name, true);
-    const input = this.#createNumberInput(defaultValue);
+  createNumericGroup(name, text, value) {
+    const block = this.#createBaseBlock(name);
 
-    block.children[0].innerHTML = this.#inputAsText(input, text);
+    const input = this.#createNumberInput(value);
+    block.blockDesc.innerHTML = this.#embedInputInTemplate(input, text);
 
-    return block;
+    this.#addBlockGroup(block);
+
+    return block.root;
   }
 
   static isBlock(element) {
-    return element.classList.contains("block");
+    return element.classList.contains(BlockBuilder.CLASS_BLOCK);
   }
 
   static isGroupArea(element) {
-    return element.classList.contains("block__group__container");
+    return element.classList.contains(BlockBuilder.CLASS_BLOCK_GROUP_CONTAINER);
   }
 
   static isBlockDescArea(element) {
-    return element.classList.contains("block__desc");
+    return element.classList.contains(BlockBuilder.CLASS_BLOCK_DESC);
   }
 
   static generateRandomBlockId() {
