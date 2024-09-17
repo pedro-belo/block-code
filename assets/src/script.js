@@ -1,28 +1,12 @@
+import BlockBuilder from "./blockBuilder";
+
 export default class Script {
   constructor(scripts) {
     this.scripts = scripts;
   }
 
-  #extractValue(block) {
-    const input = block.querySelector("input");
-    return parseInt(input.value);
-  }
-
-  #extractChildren(block) {
-    const items = block.querySelector(".block__group span");
-    return [...items.children].map((el) => this.createScriptItem(el));
-  }
-
   createScriptItem(block) {
-    const scriptItem = { name: block.dataset.name };
-
-    if (block.querySelector("input") !== null)
-      scriptItem.value = this.#extractValue(block);
-
-    if (block.querySelector(".block__group") !== null)
-      scriptItem.children = this.#extractChildren(block);
-
-    return scriptItem;
+    return BlockBuilder.toJson(block);
   }
 
   generate() {
