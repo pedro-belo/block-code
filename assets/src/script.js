@@ -1,4 +1,5 @@
 import BlockBuilder from "./blockBuilder";
+import util from "./util";
 
 export default class Script {
   constructor(scripts) {
@@ -16,8 +17,7 @@ export default class Script {
   }
 
   run(cpu, cursor, space) {
-    const result = this.generate();
-    result.forEach((script) => {
+    this.generate().forEach((script) => {
       cpu.execute(script, cursor, space);
     });
   }
@@ -25,20 +25,7 @@ export default class Script {
   download() {
     const sourceCode = this.generate();
     const sourceCodeAsText = JSON.stringify(sourceCode);
-
-    const file = new File([sourceCodeAsText], "script.json", {
-      type: "text/plain",
-    });
-
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(file);
-    link.download = file.name;
-    link.style.display = "none";
-
-    document.body.appendChild(link);
-    link.click();
-
-    document.body.removeChild(link);
+    util.file.download(sourceCodeAsText, "script.json");
   }
 
   addScript(block) {

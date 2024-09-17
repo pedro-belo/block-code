@@ -34,6 +34,20 @@ const file = {
     const data = JSON.parse(textContent);
     return data;
   },
+  download(content, fileName, fileType = "application/json") {
+    const file = new File([content], fileName, {
+      type: fileType,
+    });
+
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(file);
+    link.download = file.name;
+    link.style.display = "none";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  },
 };
 
 const util = {
