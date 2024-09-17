@@ -6,111 +6,122 @@ export default class Block {
   }
 
   reconstruct(blockData, styleAs) {
-    const fnCreate = {
-      HideTurtle: () => this.createHideTurtle(),
-      gotoCenter: () => this.createGotoCenter(),
-      penUp: () => this.createPenUp(),
-      penDown: () => this.createPenDown(),
-      left: () => this.createLeft(),
-      right: () => this.createRight(),
-      back: () => this.createBack(),
-      forward: () => this.createForward(),
-      circle: () => this.createCircle(),
-      repeat: () => this.createRepeat(),
-    };
+    const fnCreate =
+      "create" +
+      blockData.name.charAt(0).toUpperCase() +
+      blockData.name.slice(1);
 
-    const block = styleAs(fnCreate[blockData.name]());
+    const block = this[fnCreate](blockData);
 
-    const input = block.querySelector("input");
-    if (input !== null) {
-      input.value = blockData.value;
-    }
-
-    if (Object.prototype.hasOwnProperty.call(blockData, "children")) {
+    if (blockData.children) {
       const children = blockData.children.map((children) =>
         this.reconstruct(children, styleAs)
       );
 
-      children.forEach((children) => {
-        block.children[1].children[0].appendChild(children);
+      children.forEach((c) => {
+        BlockBuilder.appendInGroup(block, c);
       });
     }
 
-    return block;
-  }
-
-  static #style(block, toAdd, toRemove) {
-    // Block
-    block.classList.add(`block--${toAdd}`);
-    block.classList.remove(`block--${toRemove}`);
-
-    // Block desc
-    const blockDesc = block.querySelector(".block__desc");
-    blockDesc.classList.add(`block__desc--${toAdd}`);
-    blockDesc.classList.remove(`block__desc--${toRemove}`);
-
-    // Block group
-    const blockGroup = block.querySelector(".block__group");
-    if (blockGroup !== null) {
-      blockGroup.classList.add(`block__group--${toAdd}`);
-      blockGroup.classList.remove(`block__group--${toRemove}`);
-    }
-    return block;
+    return styleAs(block);
   }
 
   static styleStatement(block) {
-    return Block.#style(block, "statement", "script");
+    return BlockBuilder.style(block, "statement", "script");
   }
+
   static styleScript(block) {
-    return Block.#style(block, "script", "statement");
+    return BlockBuilder.style(block, "script", "statement");
   }
 
-  createHideTurtle() {
-    return this.builder.createSimpleBlock("HideTurtle", "Hide Turtle");
+  createHideTurtle(data) {
+    return this.builder.createBlock({
+      name: "HideTurtle",
+      text: "Hide Turtle",
+      ...(data ?? {}),
+    });
   }
 
-  createGotoCenter() {
-    return this.builder.createSimpleBlock("gotoCenter", "Back to Center");
+  createGotoCenter(data) {
+    return this.builder.createBlock({
+      name: "gotoCenter",
+      text: "Back to Center",
+      ...(data ?? {}),
+    });
   }
 
-  createPenUp() {
-    return this.builder.createSimpleBlock("penUp", "Pen Up");
+  createPenUp(data) {
+    return this.builder.createBlock({
+      name: "penUp",
+      text: "Pen Up",
+      ...(data ?? {}),
+    });
   }
 
-  createPenDown() {
-    return this.builder.createSimpleBlock("penDown", "Pen Down");
+  createPenDown(data) {
+    return this.builder.createBlock({
+      name: "penDown",
+      text: "Pen Down",
+      ...(data ?? {}),
+    });
   }
 
-  createLeft() {
-    return this.builder.createNumericBlock("left", "Left __REPL__ degress", 90);
+  createLeft(data) {
+    return this.builder.createBlock({
+      name: "left",
+      text: "Left __REPL__ degress",
+      value: 90,
+      ...(data ?? {}),
+    });
   }
 
-  createRight() {
-    return this.builder.createNumericBlock(
-      "right",
-      "Right __REPL__ degress",
-      90
-    );
+  createRight(data) {
+    return this.builder.createBlock({
+      name: "right",
+      text: "Right __REPL__ degress",
+      value: 90,
+      ...(data ?? {}),
+    });
   }
 
-  createBack() {
-    return this.builder.createNumericBlock("back", "Back __REPL__ steps", 100);
+  createBack(data) {
+    return this.builder.createBlock({
+      name: "back",
+      text: "Back __REPL__ steps",
+      value: 100,
+      ...(data ?? {}),
+    });
   }
 
-  createForward() {
-    return this.builder.createNumericBlock(
-      "forward",
-      "Forward __REPL__ steps",
-      100
-    );
+  createForward(data) {
+    return this.builder.createBlock({
+      name: "forward",
+      text: "Forward __REPL__ steps",
+      value: 100,
+      ...(data ?? {}),
+    });
   }
 
-  createCircle() {
-    return this.builder.createNumericBlock("circle", "Circle __REPL__", 20);
+  createCircle(data) {
+    return this.builder.createBlock({
+      name: "circle",
+      text: "Circle __REPL__",
+      value: 20,
+      ...(data ?? {}),
+    });
   }
 
-  createRepeat() {
-    return this.builder.createNumericGroup("repeat", "Repeat __REPL__", 10);
+  createRepeat(data) {
+    const block = this.builder.createBlock({
+      name: "repeat",
+      text: "Repeat __REPL__",
+      value: 10,
+      ...(data ?? {}),
+    });
+
+    this.builder.addBlockGroup(block);
+
+    return block;
   }
 
   static clone(block) {
