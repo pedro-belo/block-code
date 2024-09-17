@@ -4,6 +4,11 @@ const mapNameToAttr = {
   className: "class",
 };
 
+function applyStyle(element, baseClass, toAdd, toRemove) {
+  element.classList.add(`${baseClass}--${toAdd}`);
+  element.classList.remove(`${baseClass}--${toRemove}`);
+}
+
 function createElement(tagName, attrs) {
   const element = document.createElement(tagName);
 
@@ -12,6 +17,10 @@ function createElement(tagName, attrs) {
   });
 
   return element;
+}
+
+function hasClass(element, className) {
+  return element.classList.contains(className);
 }
 
 export default class BlockBuilder {
@@ -38,19 +47,18 @@ export default class BlockBuilder {
   #createBaseBlockDesc() {
     return createElement("p", { className: BlockBuilder.CLASS_BLOCK_DESC });
   }
-
-  #addBlockGroup(block) {
-    block.blockGroup = createElement("div", {
+  addBlockGroup(block) {
+    const blockGroup = createElement("div", {
       className: BlockBuilder.CLASS_BLOCK_GROUP,
     });
 
-    block.blockGroup.appendChild(
+    blockGroup.appendChild(
       createElement("span", {
         className: BlockBuilder.CLASS_BLOCK_GROUP_CONTAINER,
       })
     );
 
-    block.root.appendChild(block.blockGroup);
+    block.appendChild(blockGroup);
   }
 
   #createNumberInput(value) {
@@ -65,42 +73,72 @@ export default class BlockBuilder {
     return template.replace("__REPL__", inputText);
   }
 
-  createSimpleBlock(name, text) {
-    const block = this.#createBaseBlock(name);
-    block.blockDesc.textContent = text;
-    return block.root;
-  }
+  createBlock(data) {
+    const block = this.#createBaseBlock(data.name);
 
-  createNumericBlock(name, text, value) {
-    const block = this.#createBaseBlock(name);
-
-    const input = this.#createNumberInput(value);
-    block.blockDesc.innerHTML = this.#embedInputInTemplate(input, text);
+    if (data.value) {
+      const input = this.#createNumberInput(data.value);
+      block.blockDesc.innerHTML = this.#embedInputInTemplate(input, data.text);
+    } else {
+      block.blockDesc.textContent = data.text;
+    }
 
     return block.root;
   }
 
-  createNumericGroup(name, text, value) {
-    const block = this.#createBaseBlock(name);
+  static style(block, toAdd, toRemove) {
+    // Block
+    applyStyle(block, BlockBuilder.CLASS_BLOCK, toAdd, toRemove);
 
-    const input = this.#createNumberInput(value);
-    block.blockDesc.innerHTML = this.#embedInputInTemplate(input, text);
+    // Block desc
+    const blockDesc = block.querySelector(`.${BlockBuilder.CLASS_BLOCK_DESC}`);
+    applyStyle(blockDesc, BlockBuilder.CLASS_BLOCK_DESC, toAdd, toRemove);
 
-    this.#addBlockGroup(block);
+    // Block group
+    const blockGroup = block.querySelector(
+      `.${BlockBuilder.CLASS_BLOCK_GROUP}`
+    );
+    if (blockGroup) {
+      applyStyle(blockGroup, BlockBuilder.CLASS_BLOCK_GROUP, toAdd, toRemove);
+    }
 
-    return block.root;
+    return block;
+  }
+
+  static appendInGroup(block, element) {
+    block.children[1].children[0].appendChild(element);
+  }
+
+  static toJson(block) {
+    const blockData = { name: block.dataset.name };
+
+    const input = block.querySelector("input");
+    if (input) {
+      blockData.value = parseInt(input.value);
+    }
+
+    const container = block.querySelector(
+      `.${BlockBuilder.CLASS_BLOCK_GROUP_CONTAINER}`
+    );
+    if (container) {
+      blockData.children = [...container.children].map((c) =>
+        BlockBuilder.toJson(c)
+      );
+    }
+
+    return blockData;
   }
 
   static isBlock(element) {
-    return element.classList.contains(BlockBuilder.CLASS_BLOCK);
+    return hasClass(element, BlockBuilder.CLASS_BLOCK);
   }
 
   static isGroupArea(element) {
-    return element.classList.contains(BlockBuilder.CLASS_BLOCK_GROUP_CONTAINER);
+    return hasClass(element, BlockBuilder.CLASS_BLOCK_GROUP_CONTAINER);
   }
 
   static isBlockDescArea(element) {
-    return element.classList.contains(BlockBuilder.CLASS_BLOCK_DESC);
+    return hasClass(element, BlockBuilder.CLASS_BLOCK_DESC);
   }
 
   static generateRandomBlockId() {
